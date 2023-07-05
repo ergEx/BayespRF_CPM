@@ -155,6 +155,8 @@ function varargout = spm_prf_analyse(mode,varargin)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.   
 % ---------------------------------------------------------------------
+% Changes
+% 20230.07.05 - By Simon R. Steinkamp safegaurd against numerical edge case.
 
 switch upper(mode)
     case 'SPECIFY'
@@ -334,7 +336,6 @@ scale   = 4/max(scale,4);
 Y.y     = Y.y*scale;
 Y.scale = scale;
 
-% Prepare data
 TR   = SPM.xY(1).RT;
 Y.dt = TR;
 Y.X0 = ones(size(Y.y,1),1);
@@ -349,13 +350,21 @@ bins_per_second = 1 / U(1).dt;
 bins_per_TR     = bins_per_second * TR;
 nscans          = size(Y.y,1);
 
+if ~floor(bins_per_TR)==bins_per_TR
+    warning('Bins per TR is not an integer value, please check dt and TR input values.');
+    bins_per_TR = round(bins_per_TR);
+elseif mod(bins_per_TR, 1) ~= 0
+    warning('Bins per TR is not an integer value, please check dt and TR input values.');
+    bins_per_TR = round(bins_per_TR);
+end
+
 for t = 1:length(U)
-    start_bin = ceil( U(t).ons / U(t).dt) + 1;
+    start_bin = ceil(U(t).ons / U(t).dt) + 1;
     end_bin   = start_bin + (U(t).dur * bins_per_second) - 1;
 
     U(t).ind   = start_bin : end_bin;           % Microtime bins (from 1)
     U(t).nbins = nscans*bins_per_TR;            % Total bins
-end     
+end
 
 % Prepare model
 M = specify_model(U,size(Y.y,1),size(Y.y,2),options);
@@ -609,6 +618,7 @@ function M = specify_model(U,ns,nv,options)
 try options.model; catch, options.model = 'spm_prf_fcn_gaussian'; end
 M.IS = options.model;
 
+M.options = options;
 % Parameter scaling
 try 
     M.pmax = U(1).pmax;
