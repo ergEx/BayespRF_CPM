@@ -1,0 +1,1 @@
+regex_function_name: ([A-Z,a-z]+|[A-Z][a-z]*)(_([A-Z]+|[A-Z][a-z]*|[0-9]+))*
