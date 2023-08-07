@@ -3,6 +3,8 @@ GLM/
 example_3T/scripts/onsets.mat
 example_3T/scripts/models_for_cluster
 deleted/
+example_RL
+example_RW
 
 # Windows image file caches
 Thumbs.db
