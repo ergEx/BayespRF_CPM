@@ -13,7 +13,7 @@ function varargout = spm_prf_analyse(mode,varargin)
 % SPM - filename of the subject's SPM.mat file (or SPM structure)
 %
 % xY  - Cell array of VOI_XX.mat files containing the timeseries for pRF
-%       estimation, or a cell array of structures. Each element of the cell 
+%       estimation, or a cell array of structures. Each element of the cell
 %       array is one session (run) with the format:
 %
 %       xY{s}.Y     - summary timeseries [t x 1]
@@ -46,7 +46,7 @@ function varargout = spm_prf_analyse(mode,varargin)
 %       U(t).duration - stimulus duration in seconds [1 x 1]
 %
 %       U(t).dt       - each stimulus time step will be divided into short
-%                       'microtime' bins. This is the length of each bin in 
+%                       'microtime' bins. This is the length of each bin in
 %                       seconds, typically 1/8. [1 x 1]
 %
 %       Note that dist, angle, pmax and pmin may be redefined by the pRF
@@ -128,9 +128,9 @@ function varargout = spm_prf_analyse(mode,varargin)
 % P - cell or character array of pRF files to merge
 % dir_out - output directory for the merged model
 %
-% This function is particularly useful in a cluster setting, for merging 
+% This function is particularly useful in a cluster setting, for merging
 % pRFs estimated on different nodes in a cluster.
-%                       
+%
 % -------------------------------------------------------------------------
 % Extract a single voxel pRF from a multi-voxel pRF file:
 %
@@ -146,17 +146,17 @@ function varargout = spm_prf_analyse(mode,varargin)
 % it under the terms of the GNU General Public License as published by
 % the Free Software Foundation, either version 3 of the License, or
 % (at your option) any later version.
-% 
+%
 % This program is distributed in the hope that it will be useful,
 % but WITHOUT ANY WARRANTY; without even the implied warranty of
 % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 % GNU General Public License for more details.
-% 
+%
 % You should have received a copy of the GNU General Public License
-% along with this program.  If not, see <http://www.gnu.org/licenses/>.   
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
 % ---------------------------------------------------------------------
 % Changes
-% 20230.07.05 - By Simon R. Steinkamp safegaurd against numerical edge case.
+% 2023.07.05 - By Simon R. Steinkamp safeguards against numerical edge case.
 
 switch upper(mode)
     case 'SPECIFY'
@@ -187,11 +187,11 @@ switch upper(mode)
         else
             out_dir = '';
         end
-        
+
         if ischar(PRF)
             if isempty(out_dir), out_dir = fileparts(PRF); end
             PRF = load(PRF);
-            PRF = PRF.PRF;                        
+            PRF = PRF.PRF;
         elseif isempty(out_dir)
             out_dir = pwd;
         end
@@ -200,7 +200,7 @@ switch upper(mode)
         P = varargin{1};
         if ~iscell(P)
             P = cellstr(P);
-        end        
+        end
         if length(varargin) > 1
             out_dir = varargin{2};
         else
@@ -212,20 +212,20 @@ switch upper(mode)
         idx      = varargin{2};
         out_name = varargin{3};
         try out_dir = fileparts(PRF); catch, out_dir = pwd; end
-        
+
         if ischar(PRF)
             PRF = load(PRF);
             PRF = PRF.PRF;
         end
-        
+
         PRF      = extract_model(PRF,idx);
         PRF.name = ['PRF_' out_name];
-        
+
         save_prf(PRF, out_dir);
         varargout{1} = PRF;
     case 'GET_PARAMETERS'
         PRF = varargin{1};
-        
+
         varargout{1} = get_corrected_parameters(PRF);
     otherwise
         error('Unknown action');
@@ -235,8 +235,8 @@ function PRF = specify(SPM,rois,U,options)
 % Specify a PRF model
 %
 % SPM     - SPM.mat, for getting the TR and working directory
-% rois    - filename or structure with eigenvariate Y and xY (see 
-%           spm_regions). If a cell array is given, the timeseries from 
+% rois    - filename or structure with eigenvariate Y and xY (see
+%           spm_regions). If a cell array is given, the timeseries from
 %           each are averaged.
 % U       - input timing
 % options - model options
@@ -263,21 +263,21 @@ end
 n_sess = length(rois);
 
 % Choose whether to average timeseries
-try 
-    options.avg_sess;   
+try
+    options.avg_sess;
 catch
     options.avg_sess = (n_sess > 1);
 end
 
 % Choose method of averaging multiple timeseries
-try 
+try
     options.avg_method;
 catch
     options.avg_method = 'mean';
 end
 
 for sess = 1:n_sess
-    
+
     % Unpack
     if ischar(rois{sess})
         % From filename
@@ -289,9 +289,9 @@ for sess = 1:n_sess
         xY_sess     = rois{sess}.xY;
         Y_sess      = rois{sess}.Y;
     end
-        
+
     options.avg_method = 'mean';
-    
+
     % Choose voxel-wise or eigenvariate data
     if options.voxel_wise
         y = xY_sess.y;
@@ -305,7 +305,7 @@ for sess = 1:n_sess
                 error('Unknown timeseries summary method');
         end
     end
-       
+
     % Validate voxel locations match previous session
     if options.avg_sess
         if sess > 1 && ~all(XYZmm(:) == xY_sess.XYZmm(:))
@@ -313,7 +313,7 @@ for sess = 1:n_sess
         end
         XYZmm = xY_sess.XYZmm;
     end
-    
+
     if ~isfield(Y,'y') || isempty(Y.y)
         Y.y = y;
     elseif options.avg_sess
@@ -327,7 +327,7 @@ end
 
 if options.avg_sess
     % Complete averaging over sessions
-    Y.y = Y.y ./ n_sess;    
+    Y.y = Y.y ./ n_sess;
 end
 
 % check scaling of Y (enforcing a maximum effect size of 4)
@@ -452,23 +452,23 @@ if est_options.use_parfor ~= 0
     % Run with parallel toolbox
     parfor i = voxels
         if ny > 1, fprintf('Voxel %d of %d\n', i, ny); end
-             
+
         % Initialize priors
         [pE{i},pC{i},P{i}] = initialize_model(M,U,Y.y,i,est_options);
-        
+
         % Model updated with initialized priors
         M2 = M;
         M2.pE = pE{i};
         M2.pC = pC{i};
         M2.P  = P{i};
-        
-        % Fit        
+
+        % Fit
         [Ep{i},Cp{i},Eh(i),F(i)] = fit_model(M2,U,Y,i);
 
-    end    
+    end
 else
     % Run single threaded
-    for i = voxels 
+    for i = voxels
         if ny > 1, fprintf('Voxel %d of %d\n', i, ny); end
 
         % Initialize priors
@@ -480,9 +480,9 @@ else
         M2.pE = pE{i};
         M2.pC = pC{i};
         M2.P  = P{i};
-                
+
         % Fit
-        [Ep{i},Cp{i},Eh(i),F(i)] = fit_model(M2,U,Y,i);                           
+        [Ep{i},Cp{i},Eh(i),F(i)] = fit_model(M2,U,Y,i);
     end
 end
 est_time = toc;
@@ -515,7 +515,7 @@ PRF.est_time = est_time;
 % Add in predicted timeseries (if there's only one timeseries)
 if ny == 1 && ~isempty(Ep{1})
     PRF.y = feval(IS,Ep{1},M,U);
-end 
+end
 
 % Save
 if do_save
@@ -545,23 +545,23 @@ P  = pE;
 
 switch upper(est_options.init)
     case 'GLM'
-        
+
         % Update pE - the prior means
         fprintf('Initializing priors using GLM\n');
-        
+
         P_glm = feval(M.IS,pE,M,U,'glm_initialize',y(:,i));
-        
+
         fields = fieldnames(P_glm);
         for i = 1:length(fields)
             pE.(fields{i}) = P_glm.(fields{i});
         end
-        
+
     case 'GLM_P'
         % Update P - the initial starting values
         fprintf('Initializing starting value using GLM\n');
-        
+
         P_glm = feval(M.IS,pE,M,U,'glm_initialize',y(:,i));
-        
+
         fields = fieldnames(P_glm);
         for i = 1:length(fields)
             P.(fields{i}) = P_glm.(fields{i});
@@ -597,6 +597,7 @@ try
     [Ep,Cp,Eh,F] = spm_nlsi_GN(M,U,Y);
 catch e
     warning('PRF failed to converge');
+    disp(e)
     Ep = [];
     Cp = [];
     Eh = NaN;
@@ -620,7 +621,7 @@ M.IS = options.model;
 
 M.options = options;
 % Parameter scaling
-try 
+try
     M.pmax = U(1).pmax;
     M.pmin = U(1).pmin;
     M.rmin = U(1).rmin;
@@ -638,7 +639,7 @@ pv = 1/128;
 pE.transit = 0;
 pE.decay   = 0;
 pC.transit = pv;
-pC.decay   = pv;    
+pC.decay   = pv;
 
 % Field strength
 M.B0 = options.B0;
@@ -671,14 +672,14 @@ if isstruct(pE) && (length(pE) == 1)
 elseif isstruct(pE) && (length(pE) > 1)
     % Different expectations per voxel
     assert(length(pE) == nv,...
-        'Number of voxels in prior spec does not match the model');    
+        'Number of voxels in prior spec does not match the model');
     for v = 1:nv
         M.pE{v} = pE(v);
-    end    
-else 
+    end
+else
     error('Unknown prior expectation specification');
 end
-    
+
 % Assign prior covariances to voxels
 if isstruct(pC) && (length(pC) == 1)
     % One set of expectations for all voxels
@@ -688,11 +689,11 @@ if isstruct(pC) && (length(pC) == 1)
 elseif isstruct(pC) && (length(pC) > 1)
     % Different expectations per voxel
     assert(length(pC) == nv,...
-        'Number of voxels in prior spec does not match the model');    
+        'Number of voxels in prior spec does not match the model');
     for v = 1:nv
         M.pC{v} = pC(v);
-    end    
-else 
+    end
+else
     error('Unknown prior covariance specification');
 end
 
@@ -731,17 +732,17 @@ end
 
 for r = 1:length(PRFs)
     PRF = PRFs{r};
-    
-    % Get PRF name    
+
+    % Get PRF name
     if isfield(PRF,'name') && ~isempty(PRF.name)
         name = PRF.name;
     else
         name = ['PRF_R' num2str(r)];
     end
-    
+
     % Save
-    PRF.name = name;    
-    filename = fullfile(parent_folder, [name '.mat']);    
+    PRF.name = name;
+    filename = fullfile(parent_folder, [name '.mat']);
     save(filename,'PRF');
 end
 
@@ -769,9 +770,9 @@ PRF0.xY = rmfield(PRF0.xY,'y');
 for p = 1:num_models
     fprintf('Writing model %d\n',p);
     vox_idx = first_voxel(p):last_voxel(p);
-    
+
     PRF = extract_model(PRF0,vox_idx);
-    
+
     PRF.name = sprintf('%s_%d', PRF0.name, p);
     save_prf(PRF, out_dir);
 end
@@ -799,20 +800,20 @@ for m = 1:length(P)
     fprintf('Reading PRF file %d\n',m);
     PRF=load(P{m});
     PRF=PRF.PRF;
-    
+
     XYZmm = [XYZmm PRF.xY.XYZmm];
     Y.y   = [Y.y PRF.Y.y];
-    
+
     pE = [pE PRF.M.pE];
     pC = [pC PRF.M.pC];
     Ep = [Ep PRF.Ep];
     Cp = [Cp PRF.Cp];
     Pp = [Pp PRF.Pp];
     Eh = [Eh PRF.Eh];
-    F  = [F  PRF.F];   
-    
+    F  = [F  PRF.F];
+
     est_time = [est_time PRF.est_time];
-    
+
     nm(m) = length(PRF.Ep);
 end
 
@@ -856,7 +857,7 @@ end
 
 if isfield(PRF,'M') && isfield(PRF.M,'pE')
     PRF.M.pE = PRF0.M.pE(vox_idx);
-    PRF.M.pC = PRF0.M.pC(vox_idx);    
+    PRF.M.pC = PRF0.M.pC(vox_idx);
 end
 
 PRF.Y.y = PRF0.Y.y(:,vox_idx);
