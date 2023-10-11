@@ -1,5 +1,5 @@
-function plot_single_voxel(PRF, idx, plot_names, transformers, ...
-                           transform_names, num_samples, posterior)
+function [z] = plot_single_voxel(PRF, idx, plot_names, transformers, ...
+                                 transform_names, num_samples, posterior)
     % Plotting function for a single PRF with many possibilities, needs to be
     % rewritten significantly in the near future.
     % TODO: Rewrite
