@@ -374,7 +374,11 @@ function P = glm_initialize(P, M, U, y)
         % Downsample regressor
         fMRI_T = spm_get_defaults('stats.fmri.t');
         ns     = M.ns;
-        ind    = (0:(ns - 1)) * fMRI_T + M.T0;
+        TR = (length(z) * U(1).dt) / M.ns; % Recover repetition time
+        % Recover sampling factor:
+        sampT =  round(TR / U(1).dt);
+
+        ind    = (0:(ns - 1)) * sampT + M.T0;
         z      = z(ind, :);
 
         X = [z ones(ns, 1)];
