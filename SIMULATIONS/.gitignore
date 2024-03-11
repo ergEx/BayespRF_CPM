@@ -2,3 +2,5 @@ results
 .trash
 *.asv
 simulationfiles
+*.pdf
+*.png
