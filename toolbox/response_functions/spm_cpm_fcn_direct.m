@@ -82,7 +82,7 @@ function varargout = spm_cpm_fcn_direct(P, M, U, varargin)
                 end
 
                 % Corrected haemodynamic parameters
-                P.beta    = abs(P.beta);
+                P.beta    = log(P.beta);
 
                 P.transit = log(P.transit);
                 P.decay   = log(P.decay);
@@ -221,7 +221,7 @@ function P = correct_parameters(P, M)
     end
 
     % Convert log beta -> beta
-    P.beta    = abs(P.beta);
+    P.beta    = exp(P.beta);
 
     % -------------------------------------------------------------------------
 function [tf, Pp] = is_above_threshold(Pp, M, Cp, v, alpha)
@@ -279,8 +279,8 @@ function [pE, pC] = get_priors(M)
         pC.(params{fn}) = 1;
     end
 
-    pE.beta    = 0;
-    pC.beta    = 2;
+    pE.beta    = -2;
+    pC.beta    = 4;
 
     % -------------------------------------------------------------------------
 function P = glm_initialize(P, M, U, y)
