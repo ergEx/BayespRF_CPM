@@ -16,7 +16,8 @@ function [configs] = simulation_configs()
     % along with this program.  If not, see <http://www.gnu.org/licenses/>.
     % ---------------------------------------------------------------------
 
-    configs.spm_path = ''; % Path to spm toolbox https://github.com/spm/spm12
-    configs.vba_path = ''; % Path to VBA toolbox https://github.com/MBB-team/VBA-toolbox
-
+    % Path to spm toolbox https://github.com/spm/spm12
+    configs.spm_path = '../../../toolboxes/spm12/';
+    % Path to VBA toolbox https://github.com/MBB-team/VBA-toolbox
+    configs.vba_path = '../../../toolboxes/VBA-toolbox/';
 end
