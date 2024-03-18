@@ -68,7 +68,7 @@ function spm_int_speedup()
 
         non_spar(ii) = length(tmp_z(tmp_z ~= 0)) / (M.ns  * 28);
 
-        parfor jj = 1:no_sims
+        for jj = 1:no_sims
             tic;
             ty = spm_int_sparse(P, M, tmp_z');
             times_sparse(jj, ii) = toc;

@@ -55,7 +55,7 @@ function simulations_td(REDO, basedir)
     % risk-sensitivie TD has a positive and a negative learning rate.
     % Setting for the experiment
     resolution = 41; % Resolution of the simulation grid
-    TR = 1.6; % Repetition time of the fMRI data, i.e. the sampling rate
+    TR = 0.592; % Repetition time of the fMRI data, i.e. the sampling rate
     nslices = 28; % Oversampling (often the number of slices to account for slice time correction
     test_centers = logit([0.25, 0.75]);
     test_widths = [abs(test_centers(1)) / 1.5, abs(test_centers(1)) / 2.5];
@@ -63,9 +63,9 @@ function simulations_td(REDO, basedir)
     reasonable_space = [-4.0, 4.0];  % [logit(0.0001), logit(1 - 0.0001)];
     % SNRs = [20, 10, 2, -2, -10, -20], signalvar ~ 0.0519 (estimate_sd_vor_snrs,
     % after VOI is estimated
-    noise_levels = [0     0.0106    0.0334    0.0839    0.1329    0.3339    1.0558];
+    noise_levels = [0  0.0076    0.0240    0.0603    0.0956    0.2402    0.7594];
     fixedparams = struct('lambda', 1.0, 'gamma', 0.99);
-    betap = 1;
+    betap = 0.5;
     %%
     % CPM relies on it's core on a grid structure, that replaces the visual input in
     % PRF, which we can precalculate and use for both simulation and recovery, we

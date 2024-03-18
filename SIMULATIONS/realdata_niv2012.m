@@ -82,9 +82,9 @@ function [] = realdata_niv()
     fit_orig_td = zeros(size(fit_p));
     fit_orig_rstd = zeros(size(fit_p));
 
-    mse_rstd = zeros(size(fit_p));
-    mse_td = zeros(size(fit_p));
-    mse_fit = zeros(size(fit_p));
+    msez_rstd = zeros(size(fit_p));
+    msez_td = zeros(size(fit_p));
+    msez_fit = zeros(size(fit_p));
 
     learning_rates = zeros(length(run_estimation), 2, length(subjects), 3);
 
@@ -190,9 +190,12 @@ function [] = realdata_niv()
                     fit_orig_rstd(re, data_idx, sub_idx, mi) = corr(PRFn.Y.y, rstdsig');
                     fit_orig_r(re, data_idx, sub_idx, mi) = corr(rstdsig', ypred);
 
-                    mse_rstd(re, data_idx, sub_idx, mi) = mean((PRFn.Y.y - rstdsig').^2);
-                    mse_td(re, data_idx, sub_idx, mi) = mean((PRFn.Y.y - tdsig').^2);
-                    mse_fit(re, data_idx, sub_idx, mi) = mean((PRFn.Y.y - ypred).^2);
+                    msez_rstd(re, data_idx, sub_idx, mi) = mean((zscore(PRFn.Y.y) - ...
+                                                                 zscore(rstdsig')).^2);
+                    msez_td(re, data_idx, sub_idx, mi) = mean((zscore(PRFn.Y.y) - ...
+                                                               zscore(tdsig')).^2);
+                    msez_fit(re, data_idx, sub_idx, mi) = mean((zscore(PRFn.Y.y) - ...
+                                                                zscore(ypred)).^2);
 
                     if strcmp(model_names{mi}, 'td')
                         true_params = cpm_get_true_parameters(PRFn, 1);
@@ -279,7 +282,7 @@ function [] = realdata_niv()
 
     subplot(2, 3, 5);
 
-    mse_diff = sqrt(mse_rstd) - sqrt(mse_td);
+    mse_diff = sqrt(msez_rstd) - sqrt(msez_td);
 
     scatter(ones(length(subjects), 1)', squeeze(mse_diff(1, 1, :,  1)));
     hold on;
@@ -292,7 +295,7 @@ function [] = realdata_niv()
     title('MSE original models');
     subplot(2, 3, 6);
 
-    mse_diff = sqrt(mse_fit(:, :, :, 2)) - sqrt(mse_fit(:, :, :, 1));
+    mse_diff = sqrt(msez_fit(:, :, :, 2)) - sqrt(msez_fit(:, :, :, 1));
 
     scatter(ones(length(subjects), 1)', squeeze(mse_diff(1, 1, :,  1)));
     hold on;
@@ -304,7 +307,7 @@ function [] = realdata_niv()
     title('MSE CPM');
     yline(0);
 
-    sgtitle('Application to Niv, 2012');
+    sgtitle('Application to Niv et al. (2012)');
 
     cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.png'));
 end
