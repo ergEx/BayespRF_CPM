@@ -39,7 +39,9 @@ function simulations_samsrf(REDO, basedir)
 
     simulationdir = fullfile(basedir, 'simulationfiles', filesep);
     resultsdir = fullfile(basedir, 'results', filesep);
-
+    
+    mkdir(simulationdir)
+    mkdir(resultsdir)
     addpath('simulations_samsrf/');
     rng(23, 'twister'); % Set random seed
 
@@ -92,7 +94,7 @@ function simulations_samsrf(REDO, basedir)
     %%
     grid = struct('x', [grid_space(:)', resolution], 'y', [grid_space(:)', resolution]);
     %% Precompute
-    rl_model = @cpm_grid_SAMSRF;
+    rl_model = @cpm_grid_samsrf;
     % Grid for classic RL
     U = cpm_precompute(rl_model, grid, fixedparams, data, ...
                        fullfile(simulationdir, 'U_samsrf.mat'), REDO);

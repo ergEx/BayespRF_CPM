@@ -23,8 +23,10 @@ function run_all()
     REDO = true;
 
     %%
-    simulations_td(REDO, '.');
-    %%
-    simulations_samsrf(REDO, '.');
+    simulations_td(REDO);
     %%
     realdata_niv2012();
+    %%
+    simulations_samsrf(REDO);
+    %%
+    spm_int_speedup();

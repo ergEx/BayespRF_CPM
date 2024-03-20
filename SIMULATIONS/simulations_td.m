@@ -38,8 +38,9 @@ function simulations_td(REDO, basedir)
     addpath(genpath(configs.vba_path));
 
     simulationdir = fullfile(basedir, 'simulationfiles', filesep);
+    mkdir(simulationdir)
     resultsdir = fullfile(basedir, 'results', filesep);
-
+    mkdir(resultsdir)    
     addpath('simulations_td/code');
     rng(23, 'twister'); % Set random seed
     % Auxiliary functions to transform tau parameters into alpha (learning rate) space
