@@ -5,7 +5,12 @@ example_3T/scripts/models_for_cluster
 deleted/
 example_RL
 example_RW
-
+example_3T
+Example_TD_learning
+Example_Visual_PRF
+simulation_study
+html
+.doc_template
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

@@ -111,7 +111,7 @@ function varargout = spm_cpm_fcn_gaussian(P, M, U, varargin)
                 else
                     alpha = 0.95;
                 end
-                [varargout{1}, varargout{2}] = is_above_threshold(P, M, Cp, v, alpha);
+                [varargout{1}, varargout{2}, varargout{3}] = is_above_threshold(P, M, Cp, v, alpha);
             case 'get_response'
                 P = correct_parameters(P, M);
                 varargout{1} = get_response(P, M, U, U(1).gridpoints);
@@ -259,7 +259,7 @@ function P = correct_parameters(P, M)
     P.beta    = exp(P.beta);
 
     % -------------------------------------------------------------------------
-function [tf, Pp] = is_above_threshold(Pp, M, Cp, v, alpha)
+function [tf, Pp, F0] = is_above_threshold(Pp, M, Cp, v, alpha)
     % Evaluate whether the model with parameters P and covariance Cp passes an
     % arbitrary threshold for display
     %
@@ -285,10 +285,10 @@ function [tf, Pp] = is_above_threshold(Pp, M, Cp, v, alpha)
     rC(q ~= 1) = 0;
 
     % BMR
-    F = spm_log_evidence(Ep, Cp, pE, diag(spm_vec(pC)), rE, diag(rC));
+    F0 = spm_log_evidence(Ep, Cp, pE, diag(spm_vec(pC)), rE, diag(rC));
 
     % Convert to post. prob - from spm_dcm_compare
-    F    = [F 0];
+    F    = [F0 0];
     i    = F < (max(F) - 32);
     Pp    = F;
     Pp(i) = max(F) - 32;
@@ -374,7 +374,11 @@ function P = glm_initialize(P, M, U, y)
         % Downsample regressor
         fMRI_T = spm_get_defaults('stats.fmri.t');
         ns     = M.ns;
-        ind    = (0:(ns - 1)) * fMRI_T + M.T0;
+        TR = (length(z) * U(1).dt) / M.ns; % Recover repetition time
+        % Recover sampling factor:
+        sampT =  round(TR / U(1).dt);
+
+        ind    = (0:(ns - 1)) * sampT + M.T0;
         z      = z(ind, :);
 
         X = [z ones(ns, 1)];

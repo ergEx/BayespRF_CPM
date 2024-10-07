@@ -1,4 +1,4 @@
-function [s_pe, s_ep, prior_pd, post_pd] = spm_cpm_get_ppd(PRF, coords, idx, nsamp)
+function [s_pe, s_ep, prior_pd, post_pd] = spm_cpm_get_ppd(PRF, coords, idx, nsamp, use_parfor)
     % Sample from the prior (or posterior) of a pRF model and run samples
     % through the likelihood, to give the prior (or posterior) predictive
     % density (PPD).
@@ -30,10 +30,14 @@ function [s_pe, s_ep, prior_pd, post_pd] = spm_cpm_get_ppd(PRF, coords, idx, nsa
     % along with this program.  If not, see <http://www.gnu.org/licenses/>.
     % ---------------------------------------------------------------------
     % Changes
-    % 2023.07.05 - By Simon R. Steinkamp removed visual displays for s_peed up
+    % 2023.07.05 - By Simon R. Steinkamp removed visual displays for speed up
 
     if nargin < 4
         nsamp = 1;
+    end
+
+    if nargin < 5
+        use_parfor = false;
     end
 
     % Sample from priors and posteriors
@@ -67,19 +71,36 @@ function [s_pe, s_ep, prior_pd, post_pd] = spm_cpm_get_ppd(PRF, coords, idx, nsa
     prior_pd = 0;
     post_pd  = 0;
 
-    parfor i = 1:nsamp
+    if use_parfor
 
-        % Integrate model using prior sample
-        s_pe_struct = spm_unvec(s_pe(:, i), pE_struct);
+        parfor i = 1:nsamp
 
-        g = feval(PRF.M.IS, s_pe_struct, PRF.M, PRF.U, 'get_response', coords);
-        prior_pd = prior_pd + g;
+            % Integrate model using prior sample
+            s_pe_struct = spm_unvec(s_pe(:, i), pE_struct);
+            g = feval(PRF.M.IS, s_pe_struct, PRF.M, PRF.U, 'get_response', coords);
+            prior_pd = prior_pd + g;
 
-        % Integrate model using posterior sample
-        s_ep_struct = spm_unvec(s_ep(:, i), pE_struct);
+            % Integrate model using posterior sample
+            s_ep_struct = spm_unvec(s_ep(:, i), pE_struct);
+            g = feval(PRF.M.IS, s_ep_struct, PRF.M, PRF.U, 'get_response', coords);
+            post_pd = post_pd + g;
+        end
 
-        g = feval(PRF.M.IS, s_ep_struct, PRF.M, PRF.U, 'get_response', coords);
-        post_pd = post_pd + g;
+    else
+
+        for i = 1:nsamp
+
+            % Integrate model using prior sample
+            s_pe_struct = spm_unvec(s_pe(:, i), pE_struct);
+            g = feval(PRF.M.IS, s_pe_struct, PRF.M, PRF.U, 'get_response', coords);
+            prior_pd = prior_pd + g;
+
+            % Integrate model using posterior sample
+            s_ep_struct = spm_unvec(s_ep(:, i), pE_struct);
+            g = feval(PRF.M.IS, s_ep_struct, PRF.M, PRF.U, 'get_response', coords);
+            post_pd = post_pd + g;
+        end
+
     end
 
     % Average

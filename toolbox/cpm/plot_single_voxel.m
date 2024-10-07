@@ -1,5 +1,5 @@
-function plot_single_voxel(PRF, idx, plot_names, transformers, ...
-                           transform_names, num_samples, posterior)
+function [z] = plot_single_voxel(PRF, idx, plot_names, transformers, ...
+                                 transform_names, num_samples, posterior, show_grid)
     % Plotting function for a single PRF with many possibilities, needs to be
     % rewritten significantly in the near future.
     % TODO: Rewrite
@@ -30,6 +30,7 @@ function plot_single_voxel(PRF, idx, plot_names, transformers, ...
         transform_names = {'alpha', 'eta'}
         num_samples = 100
         posterior = 'posterior'
+        show_grid = true
     end
 
     if islogical(posterior)
@@ -158,8 +159,12 @@ function plot_single_voxel(PRF, idx, plot_names, transformers, ...
         pplot = pcolor(transformers{1}(griddim.(plot_names{1})), ...
                        transformers{2}(griddim.(plot_names{2})), ...
                        zp_slc);
-        pplot.LineWidth = 1e-10;
 
+        if show_grid
+            pplot.LineWidth = 1e-10;
+        else
+            set(pplot, 'EdgeColor', 'none');
+        end
         rectangle('Position', rec_pos, 'EdgeColor', 'white', 'LineWidth', 1, 'LineStyle', '--');
         axis square;
     end

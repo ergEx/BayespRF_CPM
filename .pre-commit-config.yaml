@@ -1,5 +1,5 @@
 ---
-exclude: "mkdocs.yml"
+exclude: "mkdocs.yml | cpm_tutorial.m"
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.4.0
@@ -17,6 +17,7 @@ repos:
   - id: mh_style
     name: mh_style
     entry: mh_style
+    exclude: "cpm_tutorial.m"
     args: [--process-slx, --fix]
     files: ^(.*\.(m|slx))$
     language: python
@@ -32,6 +33,7 @@ repos:
 
   - id: mh_lint
     name: mh_lint
+    exclude: "cpm_tutorial.m"
     entry: mh_lint
     files: ^(.*\.(m|slx))$
     language: python

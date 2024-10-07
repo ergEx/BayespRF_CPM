@@ -90,7 +90,7 @@ function varargout = spm_cpm_fcn_fullparametric(P, M, U, varargin)
                 else
                     alpha = 0.95;
                 end
-                [varargout{1}, varargout{2}] = is_above_threshold(P, M, Cp, v, alpha);
+                [varargout{1}, varargout{2}, varargout{3}] = is_above_threshold(P, M, Cp, v, alpha);
             case 'get_response'
                 error('"get_response", not implemented for this type of function!');
                 % P = correct_parameters(P,M);
@@ -175,7 +175,7 @@ function P = correct_parameters(P, M)
     % Constrain PRF centre
 
     % -------------------------------------------------------------------------
-function [tf, Pp] = is_above_threshold(Pp, M, Cp, v, alpha)
+function [tf, Pp, F0] = is_above_threshold(Pp, M, Cp, v, alpha)
     % Evaluate whether the model with parameters P and covariance Cp passes an
     % arbitrary threshold for display
     %
@@ -201,10 +201,10 @@ function [tf, Pp] = is_above_threshold(Pp, M, Cp, v, alpha)
     rC(q ~= 1) = 0;
 
     % BMR
-    F = spm_log_evidence(Ep, Cp, pE, diag(spm_vec(pC)), rE, diag(rC));
+    F0 = spm_log_evidence(Ep, Cp, pE, diag(spm_vec(pC)), rE, diag(rC));
 
     % Convert to post. prob - from spm_dcm_compare
-    F    = [F 0];
+    F    = [F0 0];
     i    = F < (max(F) - 32);
     Pp    = F;
     Pp(i) = max(F) - 32;

@@ -142,14 +142,14 @@ function U = cpm_precompute(model, grid, fixedparams, data, precomp_file, overwr
 
         U(1).rmin = 0; % For compatibility with PRF toolbox
 
-        % Summing signals for sparsification
-        sum_sig = sum(cat(2, U(:).signals1D));
-        sum_sig = find(sum_sig ~= 0);
+        % Removing nan-entries from data.
+        sum_sig = [U(:).ons];
+        sum_sig = find(~isnan(sum_sig));
         if ~ismember(1, sum_sig)
             sum_sig = [1, sum_sig]; % First entry in U is importatn, so we keep it here.
         end
-
         U = U(sum_sig);
+
         save(precomp_file, "U", "grid", "precomp_file");
 
     end

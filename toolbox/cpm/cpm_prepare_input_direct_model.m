@@ -2,9 +2,9 @@ function U = cpm_prepare_input_direct_model(data, fixedparams, model, constraint
     % cpm_prepare_input_direct Creates an input structure for direct models of CPM,
     % Mostly re-allocating onsets etc. to the required U structure.
     %   INPUTS:
-    %       -fixedparams: hyperparameters that are passed to the computational model
     %       -data: stimulus data to be used for computing neuronal signals. See
-    %       cpm_grid_template for details
+    %       cpm_grid_template for detail
+    %       -fixedparams: hyperparameters that are passed to the computational model
     %       -model: name computational model of interest. The user would
     %               implement this function. See cpm_grid_template for details.
     %      - contraints: contraints on the parameterspace
