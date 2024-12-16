@@ -40,7 +40,7 @@ function simulations_td(REDO, basedir)
     simulationdir = fullfile(basedir, 'simulationfiles', filesep);
     mkdir(simulationdir)
     resultsdir = fullfile(basedir, 'results', filesep);
-    mkdir(resultsdir)    
+    mkdir(resultsdir)
     addpath('simulations_td/code');
     rng(23, 'twister'); % Set random seed
     % Auxiliary functions to transform tau parameters into alpha (learning rate) space
@@ -331,11 +331,14 @@ function simulations_td(REDO, basedir)
     end
     %% ============================ Plot recovery Distributional ===================
     if true
-        fig_x = 1600;
-        fig_y = 2.1 * row_height;
-        pads = 35;
+        height_dims = [120, 225] ./ 1.25;
+        row_height = sum(height_dims);
+
+        fig_x = 1600 / 1.25;
+        fig_y = (4.2 * row_height);
+        pads = 35 / 1.25;
         fig3 = figure('Color', 'white', 'Units', 'pixels', 'Position', ...
-                      [0, 0, fig_x + pads, fig_y + 6 * pads]);
+                      [0, 0, fig_x + pads, fig_y + 4 * pads]);
         axis('off');
         normalize_vec = [1, 1, 1, 1];
 
@@ -344,8 +347,8 @@ function simulations_td(REDO, basedir)
         cl_axes = {};
         dl_axes = {};
 
-        ncols = 8;
-        nrows = 2;
+        ncols = 4;
+        nrows = 4;
 
         cc = 1;
         for cols = 1:ncols
@@ -406,12 +409,12 @@ function simulations_td(REDO, basedir)
             end
         end
 
-        pads_move =  [40; 0];  % ; 40; 0] - 15;
+        pads_move =  [60; 40; 20; 0];  % ; 40; 0] - 15;
 
         for rows = 1:nrows
             for cols = 1:ncols
                 cl_axes{rows, cols}.Position(2) = (cl_axes{rows, cols}.Position(2) + ...
-                                                   (40 + pads_move(rows, 1)) / normalize_vec(2));
+                                                   (40 / 1.25 + pads_move(rows, 1)) / normalize_vec(2));
                 dl_axes{rows, cols}.Position(2) = (dl_axes{rows, cols}.Position(2) + ...
                                                    (pads_move(rows, 1)) / normalize_vec(2));
 
@@ -545,10 +548,10 @@ function simulations_td(REDO, basedir)
     cpm_savefig(fig5, fullfile(resultsdir, 'fig5_learning_assymetry_tau.png'));
 
     %% %% Classic BPA
-    fig6 = figure('Position', [0, 0, 2000, 800]);
+    fig6 = figure('Position', [0, 0, 1600, 1200]);
     prf_names = {'Classic TD', 'Risk-sensitive TD'};
-    tiledlayout(2, 7, 'TileSpacing', 'tight', 'Padding', 'compact');
-
+    tcl=tiledlayout(4, 4, 'TileSpacing', 'tight', 'Padding', 'compact');
+    cc = 1;
     for nc = 1:2
         for nn = 1:7
             nexttile();
@@ -573,20 +576,31 @@ function simulations_td(REDO, basedir)
             t = heatmap(tmp_mat, 'MissingDataColor', 'w', 'GridVisible', ...
                         'off', 'MissingDataLabel', " ", 'ColorbarVisible', ...
                         'off', 'Colormap', colormap('parula'), 'XDisplayLabels', cl_labels, ...
-                        'YDisplayLabels', cl_labels, 'FontSize', 10 - 3 *  nc, ...
-                        'CellLabelFormat', '%0.2f');
-            t.InnerPosition = [0, 0, 1, 1];
+                        'YDisplayLabels', cl_labels, 'FontSize', 10 - 3, ...
+                        'CellLabelFormat', '%0.2f', 'ColorLimits',[-1.0 1.0]);
 
-            if nc == 1
+            t.InnerPosition = [0, 0, 1, 1];
+            %if nc == 1
                 title(sprintf('SNR %4.2f', snr_label(nn)));
-            end
-            if nn == 2
+            %end
+            if mod(cc, 4) == 1
                 ylabel(prf_names{nc});
+            end
+            cc = cc + 1;
+
+            if ismember(cc, [8, 16])
+                nexttile()
+                axis("off")
+                cc = cc + 1;
+
             end
 
         end
     end
 
+    ax = axes(tcl,'visible','off','Colormap',t.Colormap,'CLim',[-1.0, 1.0]);
+    cb = colorbar(ax);
+    cb.Layout.Tile = 'East';
     sgtitle('Posterior Correlation after BPA');
 
     cpm_savefig(fig6, fullfile(resultsdir, 'fig6_posterior_correlation_bpa.png'));

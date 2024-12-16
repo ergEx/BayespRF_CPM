@@ -234,7 +234,7 @@ function [] = realdata_niv()
 
     fig1 = figure('Position', [0, 0, 2000, 800]);
     subplot(2, 3, 1);
-    bar([squeeze(ex_probs(1, :, :))]); % , squeeze(ex_probs_sig(1,: ,:))]);
+    bar([squeeze(ex_probs(1, :, :))]'); % , squeeze(ex_probs_sig(1,: ,:))]);
     legend({'left NAcc', 'right NAcc'}); % , 'left NAcc (only sig.)', 'right NAcc (only sig.)'})
     xticklabels({'classic TD', 'risk-sensitive TD'});
     ylabel('exceedance probability');
@@ -290,7 +290,7 @@ function [] = realdata_niv()
 
     boxplot([squeeze(mse_diff(1, 1, :,  1)), squeeze(mse_diff(1, 2, :,  1))]);
     yline(0);
-    xticklabels({'left NAcc', 'rightNAcc'});
+    xticklabels({'left NAcc', 'right NAcc'});
     ylabel('rMSE_{RSTD} - rMSE_{TD}');
     title('MSE original models');
     subplot(2, 3, 6);
@@ -302,14 +302,96 @@ function [] = realdata_niv()
     scatter(ones(length(subjects), 1)' + 1, squeeze(mse_diff(1, 2, :,  1)));
 
     boxplot([squeeze(mse_diff(1, 1, :,  1)), squeeze(mse_diff(1, 2, :,  1))]);
-    xticklabels({'left NAcc', 'rightNAcc'});
+    xticklabels({'left NAcc', 'right NAcc'});
     ylabel('rMSE_{RSTD} - rMSE_{TD}');
     title('MSE CPM');
     yline(0);
 
     sgtitle('Application to Niv et al. (2012)');
 
+    % Writing out results:
+    % row 1, col 2:
+fileID = fopen(fullfile('realdata_niv2012', 'results.txt'), 'w');
+[c12_1, p12_1] = corr(squeeze(fit_r(1, 1, :, 1)), squeeze(fit_orig_td(1, 1, :, 1)));
+fprintf(fileID, 'Correlation classic TD (left): c12_1 = %.4f, p12_1 = %.10f\n', c12_1, p12_1);
+
+[c12_2, p12_2] = corr(squeeze(fit_r(1, 2, :, 1)), squeeze(fit_orig_td(1, 2, :, 1)));
+fprintf(fileID, 'Correlation classic TD (right): c12_2 = %.4f, p12_2 = %.10f\n', c12_2, p12_2);
+
+[c13_1, p13_1] = corr(squeeze(fit_r(1, 1, :, 2)), squeeze(fit_orig_rstd(1, 1, :, 1)));
+fprintf(fileID, 'Correlation RSTD (left): c13_1 = %.4f, p13_1 = %.10f\n', c13_1, p13_1);
+
+[c13_2, p13_2] = corr(squeeze(fit_r(1, 2, :, 2)), squeeze(fit_orig_rstd(1, 2, :, 1)));
+fprintf(fileID, 'Correlation RSTD (right): c13_2 = %.4f, p13_2 = %.10f\n', c13_2, p13_2);
+
+[~, p21, ~, stats_21] = ttest(squeeze(taus(1, 1, :)), squeeze(taus(1, 2, :)));
+fprintf(fileID, 'Ttest - tau: p21 = %.10f, tstat = %.4f, df = %.4f\n', p21, stats_21.tstat, stats_21.df);
+
+bf_right_clrstd = ex_probs(1, 2,2) / ex_probs(1, 2, 1);
+bf_left_clrstd = ex_probs(1, 1,2) / ex_probs(1, 1, 1);
+fprintf(fileID, 'BF_cl_rstd left  = %.10f, BF_cl_rstd right  = %.10f\n', bf_left_clrstd, bf_right_clrstd);
+
+fclose(fileID);
     cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.png'));
+    %%
+    % Example PRFs
+    fig2 = figure('Position', [0, 0, 2000, 400]);
+
+    ax(1) = subplot(1, 3, 1);
+    plot_single_voxel(PRFs{1, 1, 13, 2}, 1, {'taupos', 'tauneg'}, {[], []}, {'taupos', 'tauneg'}, 1000, 'prior', true);
+    real_params = cpm_get_true_parameters(PRFs{1, 1, 13, 2}.M.pE{1}, PRFs{1, 1, 13, 2}.M, PRFs{1, 1, 13, 2}.U);
+    scatter(real_params.mu_tauneg, real_params.mu_taupos, ...
+                        'filled', 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+                        'MarkerFaceColor', [1 1 1],  'LineWidth', 1.0);
+
+    tp = -pi:0.01:pi;
+    y_post =real_params.mu_taupos + 2 * real_params.width_taupos .* cos(tp);
+    x_post = real_params.mu_tauneg + 2 * real_params.width_tauneg .* sin(tp);
+    plot(x_post, y_post);
+    xlabel('\tau^-');
+    ylabel('\tau^+');
+    xlim(PRFs{1, 1, 13, 2}.U(1).grid.taupos(1:2));
+    ylim(PRFs{1, 1, 13, 2}.U(1).grid.tauneg(1:2));
+    title("prior density")
+
+
+    ax(2) = subplot(1, 3, 2);
+    plot_single_voxel(PRFs{1, 1, 13, 2}, 1, {'taupos', 'tauneg'}, {[], []}, {'taupos', 'tauneg'}, 400, 'posterior', true);
+    real_params = cpm_get_true_parameters(PRFs{1, 1, 13, 2}, 1);
+    scatter(real_params.mu_tauneg, real_params.mu_taupos, ...
+                        'filled', 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+                        'MarkerFaceColor', [1 1 1],  'LineWidth', 1.0);
+
+    tp = -pi:0.01:pi;
+    y_post =real_params.mu_taupos + 2 * real_params.width_taupos .* cos(tp);
+    x_post = real_params.mu_tauneg + 2 * real_params.width_tauneg .* sin(tp);
+    plot(x_post, y_post);
+    xlabel('\tau^-');
+    ylabel('\tau^+');
+    xlim(PRFs{1, 1, 13, 2}.U(1).grid.taupos(1:2));
+    ylim(PRFs{1, 1, 13, 2}.U(1).grid.tauneg(1:2));
+    title("posterior predictive density")
+
+    ax(3) = subplot(1, 3, 3);
+    plot_single_voxel(PRFs{1, 1, 13, 2}, 1, {'taupos', 'tauneg'}, {[], []}, {'taupos', 'tauneg'}, 1000, 'response', true);
+    real_params = cpm_get_true_parameters(PRFs{1, 1, 13, 2}, 1);
+    scatter(real_params.mu_tauneg, real_params.mu_taupos, ...
+                        'filled', 'MarkerEdgeColor', [0.5 0.5 0.5], ...
+                        'MarkerFaceColor', [1 1 1],  'LineWidth', 1.0);
+
+    tp = -pi:0.01:pi;
+    y_post =real_params.mu_taupos + 2 * real_params.width_taupos .* cos(tp);
+    x_post = real_params.mu_tauneg + 2 * real_params.width_tauneg .* sin(tp);
+    plot(x_post, y_post);
+    xlabel('\tau^-');
+    ylabel('\tau^+');
+    xlim(PRFs{1, 1, 13, 2}.U(1).grid.taupos(1:2));
+    ylim(PRFs{1, 1, 13, 2}.U(1).grid.tauneg(1:2));
+    title('population field')
+    sgtitle("Estimated PRFs of best fitting participant (13), left NAcc")
+
+    cpm_savefig(fig2, fullfile('realdata_niv2012', 'fig2_niv.png'));
+    %%
 end
 
 function [cleanData, stimOns, rewardOns, rewards, ...

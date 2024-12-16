@@ -40,7 +40,7 @@ function auxiliary_td()
         end
     end
     %%
-    fig1 =  figure('Position', [0, 0, 1200, 500]);
+    fig1 =  figure('Position', [0, 0, 1600, 400]);
 
     BLUE = [0, 0.4470, 0.7410];
     ORANGE = [0.8500, 0.3250, 0.0980];
@@ -64,26 +64,31 @@ function auxiliary_td()
     colors = {BLUE, ORANGE, 'black'};
 
     legend_names = {};
-
+    ons_jitter = [0.5, 0.5, -0.5, 0.0, 0.0, 0.0]  .* 0.2;
     for kk = 1:length(sidx)
 
         if ~ismember(legend_names, stimid(sidx(kk)))
             legend_names{kk} = stimid{sidx(kk)};
+            tmp_ons = ons;
         else
             legend_names{kk} = '';
+            tmp_ons = ons;
         end
         c = colors{ismember(sid, stimid(sidx(kk)))};
         tmpstim = stimuli(sidx(kk), :);
         tmpstim(tmpstim == 0) = nan;
-        stem(ons + kk / 10, tmpstim, 'Color', c, 'LineWidth', 2);
+        tmp_ons(~isnan(tmpstim)) = tmp_ons(~isnan(tmpstim)) + ons_jitter(kk);
+        stem(tmp_ons, tmpstim, 'Color', c, 'LineWidth', 2);
     end
 
     for ii = 1:length(legend_names)
         legend_names{ii} = replace(legend_names{ii}, '_', ' ');
+        legend_names{ii} = replace(legend_names{ii}, ' 428', 'Stimulus onset');
     end
 
     xlabel('Trial time in s');
     ylim([0, 1.1]);
+    xlim([ons(1), ons(end) + 0.5])
     legend(legend_names, 'Location', 'southwest');
     title('CSC-representation');
 
@@ -104,16 +109,19 @@ function auxiliary_td()
     plot(ons, ve, '-o',    'LineWidth', 2, 'Color', BLUE);
     plot(ons, rs, '--o', 'LineWidth', 2, 'Color', ORANGE);
     plot(ons, re,  '-o', 'LineWidth', 2, 'Color', ORANGE);
-
+    
     we = [0, diff(trials_td(endidx).wealth)];
     we(we == 0) = nan;
     stem(ons, we, 'LineWidth', 2, 'Color', 'black');
-
     ylabel('Value');
     xlabel('Trial time in s');
     title('TD-error and Value');
+    xlim([ons(1), ons(end) + 0.5])
 
+    h =stem(ons, [NaN, 428, 428, 428, NaN], '--', 'Color', [0.25, 0.25, 0.25, 0.25]);
+           set(h, 'Marker', 'none')
     legend({'Value (early)', 'Value (late)', 'RPE (early)', ...
-            'RPE (late)', 'Reward'}, 'Location', 'northwest');
+            'RPE (late)', 'Reward', ''}, 'Location', 'northwest');
 
-    cpm_savefig(fig1, 'simulations_td/results/csc_visualization.pdf');
+
+    cpm_savefig(fig1, 'simulations_td/results/csc_visualization.png');
