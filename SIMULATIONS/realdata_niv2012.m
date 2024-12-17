@@ -17,6 +17,7 @@ function [] = realdata_niv()
     % ---------------------------------------------------------------------
 
     %% Adding necessary paths:
+    rng(23, 'twister'); % Set random seed
 
     configs = simulation_configs();
 
@@ -331,8 +332,12 @@ bf_right_clrstd = ex_probs(1, 2,2) / ex_probs(1, 2, 1);
 bf_left_clrstd = ex_probs(1, 1,2) / ex_probs(1, 1, 1);
 fprintf(fileID, 'BF_cl_rstd left  = %.10f, BF_cl_rstd right  = %.10f\n', bf_left_clrstd, bf_right_clrstd);
 
+fprintf(fileID, 'Prob NAcc-left-CL  = %.10f, Prob NAcc-left-RSTD  = %.10f\n', ex_probs(1, 1, 1), ex_probs(1, 1, 2));
+fprintf(fileID, 'Prob NAcc-right-CL  = %.10f, Prob NAcc-right-RSTD  = %.10f\n', ex_probs(1, 2, 1), ex_probs(1, 2, 2));
+
 fclose(fileID);
-    cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.png'));
+
+cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.png'));
     %%
     % Example PRFs
     fig2 = figure('Position', [0, 0, 2000, 400]);
