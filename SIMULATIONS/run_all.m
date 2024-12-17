@@ -30,3 +30,5 @@ function run_all()
     simulations_samsrf(REDO);
     %%
     spm_int_speedup();
+    %%
+    auxiliary_td()
