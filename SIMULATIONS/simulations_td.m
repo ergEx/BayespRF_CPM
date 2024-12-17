@@ -247,7 +247,7 @@ function simulations_td(REDO, basedir)
     end
     %% Plotting for shapes
     %% ==================== Recovery Plots options =================================
-    ppd_samples = 250;
+    ppd_samples = 500;
     plot_dimentions = 'posterior';
     plot_noise = 4;
     pads = 40;
@@ -604,6 +604,59 @@ function simulations_td(REDO, basedir)
     sgtitle('Posterior Correlation after BPA');
 
     cpm_savefig(fig6, fullfile(resultsdir, 'fig6_posterior_correlation_bpa.png'));
+    %% BPA without alpha = alpha
+    fig6 = figure('Position', [0, 0, 1600, 600]);
+    prf_names = {'Classic TD', 'Risk-sensitive TD'};
+    tiledlayout(2, 4, 'TileSpacing', 'tight', 'Padding', 'compact');
+
+    for nc = 2
+        for nn = 1:7
+            nexttile();
+            included =  find(extended_model_idx == 2 & noise_idx == nn);
+            nincluded = length(included);
+            GCM = cell(nincluded, 1);
+            i = 1;
+            for v = included
+                GCM{i}.Cp = PRFn{nc}.Cp{v};
+                GCM{i}.Ep = PRFn{nc}.Ep{v};
+                GCM{i}.M.pC = PRFn{nc}.M.pC{v};
+                GCM{i}.M.pE = PRFn{nc}.M.pE{v};
+                i = i + 1;
+            end
+            classic_BPA = spm_dcm_bpa(GCM);
+
+            cl_labels = fieldnames(PRFn{nc}.M.pE{1});
+            cl_labels = strrep(cl_labels, '_', ' ');
+            tmp_mat = VBA_cov2corr(classic_BPA.Cp);
+            idx = tril(tmp_mat);
+            tmp_mat(~idx) = nan;
+            t = heatmap(tmp_mat, 'MissingDataColor', 'w', 'GridVisible', ...
+                        'off', 'MissingDataLabel', " ", 'ColorbarVisible', ...
+                        'off', 'Colormap', colormap('parula'), 'XDisplayLabels', cl_labels, ...
+                        'YDisplayLabels', cl_labels, 'FontSize', 10 - 3 *  nc, ...
+                        'CellLabelFormat', '%0.2f');
+            t.InnerPosition = [0, 0, 1, 1];
+
+            %if nc == 1
+            title(sprintf('SNR %4.2f', snr_label(nn)));
+            %end
+            if mod(cc, 4) == 1
+                ylabel(prf_names{nc});
+            end
+            cc = cc + 1;
+
+            if ismember(cc, [8, 16])
+                nexttile()
+                axis("off")
+                cc = cc + 1;
+
+            end
+        end
+    end
+
+    sgtitle('Posterior Correlation after BPA');
+
+    cpm_savefig(fig6, fullfile(resultsdir, 'fig6_posterior_correlation_bpa_nocl.png'));
 
     %%
     %% Predicted Y
