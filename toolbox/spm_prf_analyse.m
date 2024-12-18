@@ -396,6 +396,7 @@ function PRF = estimate(PRF, est_options)
 try est_options.init;       catch, est_options.init       = 'GLM_P'; end
 try est_options.use_parfor; catch, est_options.use_parfor = false; end
 try est_options.nograph;    catch, est_options.nograph    = false; end
+try est_options.random_state; catch, est_options.random_state = false; end;
 
 % Make sure that nograph option is set true if use_parfor
 if est_options.use_parfor ~= 0
@@ -450,7 +451,22 @@ P = {};
 tic
 if est_options.use_parfor ~= 0
     % Run with parallel toolbox
+
+   if est_options.random_state
+        sc = parallel.pool.Constant(RandStream('Threefry'));
+    end
+
     parfor i = voxels
+        
+        if est_options.random_state
+            stream = sc.Value;
+            % Set the Substream
+            set(stream,'Substream',i);
+            % Make this stream the default (for normrnd etc.), and store
+            % the old value for later.
+            oldGlobalStream = RandStream.setGlobalStream(stream);
+        end
+  
         if ny > 1, fprintf('Voxel %d of %d\n', i, ny); end
 
         % Initialize priors
@@ -465,6 +481,9 @@ if est_options.use_parfor ~= 0
         % Fit
         [Ep{i},Cp{i},Eh(i),F(i)] = fit_model(M2,U,Y,i);
 
+         if est_options.random_state
+                RandStream.setGlobalStream(oldGlobalStream);
+        end
     end
 else
     % Run single threaded

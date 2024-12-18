@@ -59,7 +59,7 @@ function [] = realdata_niv()
     % Setting options for inversion
     invert_options = struct('use_parfor', false, ...
                             'init', 'None', ...
-                            'nograph', true);
+                            'nograph', true, 'random_state', true);
     %%
     resolution = 41;
     subjects = [];
