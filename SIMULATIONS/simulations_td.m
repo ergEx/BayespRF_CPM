@@ -170,7 +170,7 @@ function simulations_td(REDO, basedir)
     PRF_drl = spm_prf_analyse('specify', SPM, VOI, U_drl, drl_options);
     %%
 
-    options = struct('use_parfor', true, 'init', 'NONE', 'nograph', true);
+    options = struct('use_parfor', true, 'init', 'NONE', 'nograph', true, 'random_state', true);
 
     % estimate_load_prf is a simple wrapping function to check if the PRFn file
     % exists, or if the file needs to be reestimated.
@@ -633,7 +633,7 @@ function simulations_td(REDO, basedir)
             t = heatmap(tmp_mat, 'MissingDataColor', 'w', 'GridVisible', ...
                         'off', 'MissingDataLabel', " ", 'ColorbarVisible', ...
                         'off', 'Colormap', colormap('parula'), 'XDisplayLabels', cl_labels, ...
-                        'YDisplayLabels', cl_labels, 'FontSize', 10 - 3 *  nc, ...
+                        'YDisplayLabels', cl_labels, 'FontSize', 10 - 3, ...
                         'CellLabelFormat', '%0.2f');
             t.InnerPosition = [0, 0, 1, 1];
 
@@ -748,7 +748,7 @@ function simulations_td(REDO, basedir)
            'Location', 'SouthEast');
 
     disp(generators{2}(max_diff));
-
+    writetable(struct2table(generators{2}(max_diff)), fullfile(resultsdir, 'fig7_plot_struct.txt'))
     title('Simulated vs Recovered');
 
     sgtitle('Classical Model fit');
