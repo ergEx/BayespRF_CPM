@@ -29,4 +29,8 @@ function run_all()
     %%
     simulations_samsrf(REDO);
     %%
+    realdata_rewardmap(REDO)
+    %%
+    simulations_decay(REDO);
+    %%
     spm_int_speedup();
