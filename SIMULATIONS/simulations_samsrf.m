@@ -148,7 +148,7 @@ function simulations_samsrf(REDO, basedir)
                          'voxel_wise', true, 'avg_sess', false);
     PRF = spm_prf_analyse('specify', SPM, VOI, U, prf_options);
     %%
-    options = struct('use_parfor', true, 'init', 'NONE', 'nograph', true);
+    options = struct('use_parfor', true, 'init', 'NONE', 'nograph', true, 'random_state', true);
     % estimate_load_prf is a simple wrapping function to check if the PRFn file
     % exists, or if the file needs to be reestimated.
     PRFn_sim = estimate_load_prf(PRF, 'PRFn', simulationdir, options, REDO);
