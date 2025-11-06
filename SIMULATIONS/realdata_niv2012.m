@@ -332,7 +332,7 @@ bf_left_clrstd = ex_probs(1, 1,2) / ex_probs(1, 1, 1);
 fprintf(fileID, 'BF_cl_rstd left  = %.10f, BF_cl_rstd right  = %.10f\n', bf_left_clrstd, bf_right_clrstd);
 
 fclose(fileID);
-    cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.png'));
+    cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.pdf'));
     %%
     % Example PRFs
     fig2 = figure('Position', [0, 0, 2000, 400]);
@@ -390,7 +390,7 @@ fclose(fileID);
     title('population field')
     sgtitle("Estimated PRFs of best fitting participant (13), left NAcc")
 
-    cpm_savefig(fig2, fullfile('realdata_niv2012', 'fig2_niv.png'));
+    cpm_savefig(fig2, fullfile('realdata_niv2012', 'fig2_niv.pdf'));
     %%
 end
 
