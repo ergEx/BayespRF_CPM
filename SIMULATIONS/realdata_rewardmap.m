@@ -22,7 +22,7 @@ configs = simulation_configs();
 
 addpath(genpath('../toolbox'));
 addpath(configs.spm_path);
-addpath(genpath(configs.brain_slicer)); % TODO Add to configs
+addpath(genpath(configs.brain_slicer));
 addpath(genpath(configs.vba_path));
 addpath('simulations_td/code');
 
