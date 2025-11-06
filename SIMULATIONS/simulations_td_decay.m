@@ -1,4 +1,4 @@
-function simulations_td(REDO, basedir)
+function simulations_td_decay(REDO, basedir)
     % Simulation configs, file for handling of paths to toolboxes.
     % ---------------------------------------------------------------------
     % Copyright (C) 2023 Simon R. Steinkamp, Iyadh Chaker
@@ -281,9 +281,57 @@ function simulations_td(REDO, basedir)
         end
 
         sgtitle('Model Recovery');
-        cpm_savefig(fig1, fullfile(resultsdir, 'fig1_model_recovery.pdf'));
+        cpm_savefig(fig1, fullfile(resultsdir, 'figSD_1_model_recovery.pdf'));
     end
 
+
+    if true
+        plot_noise = 4;
+        pads = 40;
+        ppd_samples = 500;
+        plot_dimentions = 'posterior';
+            sets = find(genp_idx == 4 & noise_idx == plot_noise);
+            % make axes
+            fig_x = 500;
+            fig_y = 250;
+
+        onedim_t  = linspace(PRFn{3}.U(1).grid.xi(1), ...
+                            PRFn{3}.U(1).grid.xi(2), ...
+                            PRFn{3}.U(1).grid.xi(3));
+
+        fig2 = figure('Color', 'white', 'Units', 'pixels', 'Position', ...
+                      [0, 0, fig_x + pads, fig_y]);
+
+        cc = 1;
+
+        for rows = 1:2
+            for cols = 1:2
+                subplot(2, 2, cc)
+                hold on;
+                gen_mu_xi = Psim_decay(cc).mu_xi;
+                gen_width_xi = Psim_decay(cc).width_xi;
+
+                plot_single_voxel(PRFn{3}, sets(cc), {'xi'}, {[]}, {[]},  ...
+                                  ppd_samples, plot_dimentions);
+                y = normpdf(onedim_t, gen_mu_xi, gen_width_xi);
+                y = y ./ sum(y);
+
+                plot(onedim_t, y, 'LineWidth', 1.5);
+                xlim(PRFn{3}.U(1).grid.xi(1:2));
+                ylim([0, 1]);
+                tmp_title = sprintf('\\mu_\\xi= %4.2f, \\sigma_\\xi= %4.2f', ...
+                                    gen_mu_xi, gen_width_xi);
+                title(tmp_title);
+                ylabel(['Probability']);
+
+                % form [left bottom width height].
+                cc = cc + 1;
+            end
+        end
+
+        sgtitle({'Parameter Recovery: Decay', ['SNR:', num2str(snr_label(plot_noise))]});
+        cpm_savefig(fig2, fullfile(resultsdir, 'figSD_2_parameter_recovery_decay.pdf'));
+    end
 end
 
 function PRFn = estimate_load_prf(PRF, prfname, savedir, options, REDO)
