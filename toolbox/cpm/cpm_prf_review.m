@@ -592,7 +592,7 @@ function review_single_prf(PRF, idx, parent)
     % Indices of parameters to keep TODO move this
     np = length(rE);
     q  = zeros(1, np);
-    q(end - 3:end) = 1;
+    q(end - 2:end) = 1;
 
     rC(q ~= 1) = 0;
 
