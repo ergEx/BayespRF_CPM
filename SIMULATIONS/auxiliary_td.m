@@ -78,6 +78,7 @@ function auxiliary_td()
         tmpstim = stimuli(sidx(kk), :);
         tmpstim(tmpstim == 0) = nan;
         tmp_ons(~isnan(tmpstim)) = tmp_ons(~isnan(tmpstim)) + ons_jitter(kk);
+        disp(tmp_ons)
         stem(tmp_ons, tmpstim, 'Color', c, 'LineWidth', 2);
     end
 
@@ -109,19 +110,18 @@ function auxiliary_td()
     plot(ons, ve, '-o',    'LineWidth', 2, 'Color', BLUE);
     plot(ons, rs, '--o', 'LineWidth', 2, 'Color', ORANGE);
     plot(ons, re,  '-o', 'LineWidth', 2, 'Color', ORANGE);
-    
+    h =stem(ons, [NaN, 428, 428, 428, NaN], '--', 'Color', [0.25, 0.25, 0.25, 0.25]);
+       set(h, 'Marker', 'none')
+
     we = [0, diff(trials_td(endidx).wealth)];
     we(we == 0) = nan;
-    stem(ons, we, 'LineWidth', 2, 'Color', 'black');
+    h = stem(ons, we, 'LineWidth', 2, 'Color', 'black');
     ylabel('Value');
     xlabel('Trial time in s');
     title('TD-error and Value');
     xlim([ons(1), ons(end) + 0.5])
 
-    h =stem(ons, [NaN, 428, 428, 428, NaN], '--', 'Color', [0.25, 0.25, 0.25, 0.25]);
-           set(h, 'Marker', 'none')
     legend({'Value (early)', 'Value (late)', 'RPE (early)', ...
-            'RPE (late)', 'Reward', ''}, 'Location', 'northwest');
+            'RPE (late)', 'Reward'}, 'Location', 'northwest');
 
-
-    cpm_savefig(fig1, 'simulations_td/results/csc_visualization.png');
+    cpm_savefig(fig1, 'simulations_td/results/csc_visualization.pdf');
