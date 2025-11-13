@@ -336,8 +336,7 @@ fprintf(fileID, 'Prob NAcc-left-CL  = %.10f, Prob NAcc-left-RSTD  = %.10f\n', ex
 fprintf(fileID, 'Prob NAcc-right-CL  = %.10f, Prob NAcc-right-RSTD  = %.10f\n', ex_probs(1, 2, 1), ex_probs(1, 2, 2));
 
 fclose(fileID);
-
-cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.png'));
+    cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.pdf'));
     %%
     % Example PRFs
     fig2 = figure('Position', [0, 0, 2000, 400]);
@@ -395,7 +394,7 @@ cpm_savefig(fig1, fullfile('realdata_niv2012', 'fig1_niv.png'));
     title('population field')
     sgtitle("Estimated PRFs of best fitting participant (13), left NAcc")
 
-    cpm_savefig(fig2, fullfile('realdata_niv2012', 'fig2_niv.png'));
+    cpm_savefig(fig2, fullfile('realdata_niv2012', 'fig2_niv.pdf'));
     %%
 end
 

@@ -243,7 +243,7 @@ function simulations_td(REDO, basedir)
         end
 
         sgtitle('Model Recovery');
-        cpm_savefig(fig1, fullfile(resultsdir, 'fig1_model_recovery.png'));
+        cpm_savefig(fig1, fullfile(resultsdir, 'fig1_model_recovery.pdf'));
     end
     %% Plotting for shapes
     %% ==================== Recovery Plots options =================================
@@ -327,7 +327,7 @@ function simulations_td(REDO, basedir)
         end
 
         sgt = sgtitle({'Parameter Recovery: Classic TD', ['SNR:', num2str(snr_label(plot_noise))]});
-        cpm_savefig(fig2, fullfile(resultsdir, 'fig2_parameter_recovery_classic_rl.png'));
+        cpm_savefig(fig2, fullfile(resultsdir, 'fig2_parameter_recovery_classic_rl.pdf'));
     end
     %% ============================ Plot recovery Distributional ===================
     if true
@@ -424,7 +424,7 @@ function simulations_td(REDO, basedir)
         sgtitle({'Parameter Recovery: Risk-sensitive TD', ...
                  ['SNR:', num2str(snr_label(plot_noise))]});
 
-        cpm_savefig(fig3, fullfile(resultsdir, 'fig3_parameter_recovery_dist_rl.png'));
+        cpm_savefig(fig3, fullfile(resultsdir, 'fig3_parameter_recovery_dist_rl.pdf'));
     end
 
     %%
@@ -471,7 +471,7 @@ function simulations_td(REDO, basedir)
 
     sgtitle('Parameter Recovery: RMSE');
 
-    cpm_savefig(fig4, fullfile(resultsdir, 'fig4_rmse_parameter_recovery.png'));
+    cpm_savefig(fig4, fullfile(resultsdir, 'fig4_rmse_parameter_recovery.pdf'));
     %%
     %% Recover Tau*
 
@@ -545,7 +545,7 @@ function simulations_td(REDO, basedir)
     title(sprintf('Estimation at SNR %4.2f', snr_label(plot_noise)));
     legend({'', 'Classic TD', 'Risk-sensitive TD'}, 'Location', 'northwest');
 
-    cpm_savefig(fig5, fullfile(resultsdir, 'fig5_learning_assymetry_tau.png'));
+    cpm_savefig(fig5, fullfile(resultsdir, 'fig5_learning_assymetry_tau.pdf'));
 
     %% %% Classic BPA
     fig6 = figure('Position', [0, 0, 1600, 1200]);
@@ -603,7 +603,7 @@ function simulations_td(REDO, basedir)
     cb.Layout.Tile = 'East';
     sgtitle('Posterior Correlation after BPA');
 
-    cpm_savefig(fig6, fullfile(resultsdir, 'fig6_posterior_correlation_bpa.png'));
+    cpm_savefig(fig6, fullfile(resultsdir, 'fig6_posterior_correlation_bpa.pdf'));
     %% BPA without alpha = alpha
     fig6 = figure('Position', [0, 0, 1600, 600]);
     prf_names = {'Classic TD', 'Risk-sensitive TD'};
@@ -656,7 +656,7 @@ function simulations_td(REDO, basedir)
 
     sgtitle('Posterior Correlation after BPA');
 
-    cpm_savefig(fig6, fullfile(resultsdir, 'fig6_posterior_correlation_bpa_nocl.png'));
+    cpm_savefig(fig6, fullfile(resultsdir, 'fig6_posterior_correlation_bpa_nocl.pdf'));
 
     %%
     %% Predicted Y
@@ -753,7 +753,7 @@ function simulations_td(REDO, basedir)
 
     sgtitle('Classical Model fit');
 
-    cpm_savefig(fig7, fullfile(resultsdir, 'fig7_classic_model_fit.png'));
+    cpm_savefig(fig7, fullfile(resultsdir, 'fig7_classic_model_fit.pdf'));
 
     %%
     cpm_prf_review(PRFn{2}, 110);

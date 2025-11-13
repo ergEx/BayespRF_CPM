@@ -39,7 +39,7 @@ function simulations_samsrf(REDO, basedir)
 
     simulationdir = fullfile(basedir, 'simulationfiles', filesep);
     resultsdir = fullfile(basedir, 'results', filesep);
-    
+
     mkdir(simulationdir)
     mkdir(resultsdir)
     addpath('simulations_samsrf/');
@@ -269,7 +269,7 @@ function simulations_samsrf(REDO, basedir)
 
         sgtitle({'Parameter Recovery: Retinotopy', ['SNR:', num2str(snr_label(plot_noise))]});
 
-        cpm_savefig(fig3, fullfile(resultsdir, 'fig3_parameter_recovery_retinotopy.png'));
+        cpm_savefig(fig3, fullfile(resultsdir, 'fig3_parameter_recovery_retinotopy.pdf'));
     end
 
     %%
@@ -315,7 +315,7 @@ function simulations_samsrf(REDO, basedir)
 
     sgtitle('Parameter Recovery: RMSE');
 
-    cpm_savefig(fig4, fullfile(resultsdir, 'fig4_rmse_parameter_recovery_samsrf.png'));
+    cpm_savefig(fig4, fullfile(resultsdir, 'fig4_rmse_parameter_recovery_samsrf.pdf'));
 
     %%
 end

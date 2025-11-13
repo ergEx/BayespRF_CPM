@@ -156,15 +156,15 @@ function [z] = plot_single_voxel(PRF, idx, plot_names, transformers, ...
                    diff(pmus.(plot_names{1})), ...
                    diff(pmus.(plot_names{2}))];
 
-        pplot = pcolor(transformers{1}(griddim.(plot_names{1})), ...
+        pplot = imagesc(transformers{1}(griddim.(plot_names{1})), ...
                        transformers{2}(griddim.(plot_names{2})), ...
                        zp_slc);
 
-        if show_grid
-            pplot.LineWidth = 1e-10;
-        else
-            set(pplot, 'EdgeColor', 'none');
-        end
+%         if show_grid
+%             pplot.LineWidth = 1e-10;
+%         else
+%             set(pplot, 'EdgeColor', 'none');
+%         end
         rectangle('Position', rec_pos, 'EdgeColor', 'white', 'LineWidth', 1, 'LineStyle', '--');
         axis square;
     end

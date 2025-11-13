@@ -5,3 +5,8 @@ simulationfiles
 *.pdf
 *.png
 *.mat
+models
+models_init
+preprocessed_data
+*.nii
+realdata_rewardMap/*.nii

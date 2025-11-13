@@ -448,17 +448,19 @@ M.nograph = est_options.nograph;
 
 P = {};
 
+sc = [];
+
 tic
 if est_options.use_parfor ~= 0
     % Run with parallel toolbox
 
-   if est_options.random_state
+   if est_options.random_state ~= 0
         sc = parallel.pool.Constant(RandStream('Threefry'));
     end
 
     parfor i = voxels
         
-        if est_options.random_state
+        if est_options.random_state ~= 0 
             stream = sc.Value;
             % Set the Substream
             set(stream,'Substream',i);

@@ -20,4 +20,11 @@ function [configs] = simulation_configs()
     configs.spm_path = '../../toolboxes/spm12/';
     % Path to VBA toolbox https://github.com/MBB-team/VBA-toolbox
     configs.vba_path = '../../toolboxes/VBA-toolbox/';
+    % Path to BrainSlicer for visualization (uses fork at)
+    configs.brain_slicer = '../../toolboxes/BrainSlicer';
+    % Path to real data
+    configs.datapath = '';
+    configs.derivativepath = '';
+    configs.participants = {};
+
 end
