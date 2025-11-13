@@ -27,7 +27,7 @@ addpath(genpath(configs.vba_path));
 addpath('simulations_td/code');
 
 vis_template = '../../toolboxes/tpl-MNI152NLin2009cAsym_res-02_T1w.nii.gz';
-datapath =configs.realdata;
+datapath =configs.datapath;
 
 spm fmri;
 close all;
@@ -47,14 +47,15 @@ logit_inv = @(x) 1 ./ (1 + exp(-x));
 % TE of middle image.
 TE = 31.75 ./ 1000; % From paper
 
-rewardmap_participants = configs.participants
+rewardmap_participants = configs.participants;
 % This is where the PRF will be saved, we just set it to be here.
 fixedparams = struct('gamma', 0.99, 'lambda', 1.0);
 
 % Setting options for inversion
 invert_options = struct('use_parfor', true, ...
     'init', 'GLM_P', ...
-    'nograph', true);
+    'nograph', true, ...
+    'random_state', 2025);
 %
 resolution = 41;
 
@@ -265,7 +266,7 @@ bf_lims = max([abs(min(log_bf_to_map)), max(log_bf_to_map)]);
 slicer({vis_template,[out_folder ,'bf_best_sub.nii']},...
     'limits',{[],[-bf_lims, bf_lims]},...
     'colormaps', {1, 48}, ...
-    'labels',{[],['\tau^*']},... % when a layer's label is empty no colorbar will be printed.
+    'labels',{[],['logBF(TD vs RS)']},... % when a layer's label is empty no colorbar will be printed.
     'title','Bayes Factor map: TD vs RS',...
     'output', [out_folder 'bf.pdf'], ...
     slicer_args{:}) % two background modalities: black ('k') or white ('w')

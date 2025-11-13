@@ -22,4 +22,9 @@ function [configs] = simulation_configs()
     configs.vba_path = '../../toolboxes/VBA-toolbox/';
     % Path to BrainSlicer for visualization (uses fork at)
     configs.brain_slicer = '../../toolboxes/BrainSlicer';
+    % Path to real data
+    configs.datapath = '';
+    configs.derivativepath = '';
+    configs.participants = {};
+
 end

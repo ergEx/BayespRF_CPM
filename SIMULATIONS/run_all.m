@@ -29,8 +29,15 @@ function run_all()
     %%
     simulations_samsrf(REDO);
     %%
+    %%
+    addpath('realdata_rewardMap/')
+
+    parfor ii = 1 : 15
+        first_lvl_glm_VOIs(ii)
+    end
+    %%
     realdata_rewardmap(REDO)
     %%
-    simulations_decay(REDO);
+    simulations_td_decay(REDO);
     %%
     spm_int_speedup();

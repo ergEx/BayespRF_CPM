@@ -202,7 +202,7 @@ function simulations_td_decay(REDO, basedir)
 
     %%
 
-    options = struct('use_parfor', true, 'init', 'NONE', 'nograph', true);
+    options = struct('use_parfor', true, 'init', 'NONE', 'nograph', true, 'random_state', 2025);
 
     % estimate_load_prf is a simple wrapping function to check if the PRFn file
     % exists, or if the file needs to be reestimated.
